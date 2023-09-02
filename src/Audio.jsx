@@ -17,9 +17,9 @@ function Audio() {
             setValue(newValue);
           }}
         >
-          <BottomNavigationAction label="Mic" icon={<MicIcon />} />
-          <BottomNavigationAction label="Notes" icon={<NoteIcon />} />
-          <BottomNavigationAction label="Summary" icon={<SummarizeIcon />} />
+          <BottomNavigationAction label="Mic" icon={<MicIcon />} href='/'/>
+          <BottomNavigationAction label="Notes" icon={<NoteIcon />} href='/notes'/>
+          <BottomNavigationAction label="Questions" icon={<SummarizeIcon />} href='/questions'/>
       </BottomNavigation>
       </div>
       <LinearProgress />

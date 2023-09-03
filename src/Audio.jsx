@@ -45,6 +45,7 @@ function Audio() {
         .map(result => result.transcript)
         .join('')
       console.log(transcript)
+      console.log('test')
       setNote(transcript)
       mic.onerror = event => {
         console.log(event.error)
@@ -72,16 +73,16 @@ function Audio() {
       </div>
       
       <LinearProgress />
-          <div>
-            <h2>Current Note</h2>
-            {isListening ? <span>🎙️</span> : <span>🛑🎙️</span>}
-            <button onClick={handleSaveNote} disabled={!note} className='cursor-pointer'>
-                Save Note
-            </button>
-            <button onClick={() => setIsListening(prevState => !prevState)} className='cursor-pointer'> 
-                Start/Stop
-            </button>
-            <p>{note}</p>
+      <div className="box">
+          <h2>Current Note</h2>
+          {isListening ? <span>🎙️</span> : <span>🛑🎙️</span>}
+          <button onClick={handleSaveNote} disabled={!note}>
+            Save Note
+          </button>
+          <button onClick={() => setIsListening(prevState => !prevState)}>
+            Start/Stop
+          </button>
+          <p>{note}</p>
         </div>
       <p>{note}</p>
 

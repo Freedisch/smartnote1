@@ -4,6 +4,7 @@ import { BottomNavigation, BottomNavigationAction, LinearProgress } from '@mui/m
 import NoteIcon from '@mui/icons-material/Note';
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import MicIcon from '@mui/icons-material/Mic';
+import OpenAI from 'openai';
 
 const SpeechRecognition =
 window.SpeechRecognition || window.webkitSpeechRecognition
@@ -52,8 +53,35 @@ function Audio() {
       }
     }
   }
-  const handleSaveNote = () => {
-    setSavedNotes([...savedNotes, note])
+  // const handleSaveNote = () => {
+  //   setSavedNotes([...savedNotes, note])
+  //   setNote('')
+  // }
+
+  const generateSummary = async (note) => {
+    // const configuration = new Configuration({
+    //   // eslint-disable-next-line no-undef
+      
+    // });
+    const OPENAI_API_KEY = ""
+    const openai = new OpenAI({
+      // eslint-disable-next-line no-undef
+      apiKey: OPENAI_API_KEY,
+    });
+    // eslint-disable-next-line no-undef
+    console.log(OPENAI_API_KEY);
+  
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "user",
+          content: `A very detail summary of this text ${note}`,
+        },
+      ],
+    });
+    console.log(completion.data.choices[0].message.content);
+    setSavedNotes([...savedNotes, completion.data.choices[0].message.content])
     setNote('')
   }
   return (
@@ -79,8 +107,8 @@ function Audio() {
           {isListening ? <span>🛑</span> : <span>🎙️</span>} Start/Stop
           </button>
           <br></br>
-          <button onClick={handleSaveNote} disabled={!note} className=" mt-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-  Generate Note
+          <button onClick={generateSummary} disabled={!note} className=" mt-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer">
+  Generate Summary
 </button>
           
           
@@ -88,12 +116,12 @@ function Audio() {
         </div>
       {/* <p>{note}</p> */}
 
-      {/* <div className="box">
+      <div className="box">
           <h2>Notes</h2>
           {savedNotes.map(n => (
             <p key={n}>{n}</p>
           ))}
-        </div> */}
+        </div>
     </div>
   )
 }

@@ -17,10 +17,15 @@ function Audio() {
   const [value, setValue] = useState(0)
   const [isListening, setIsListening] = useState(false)
   const [note, setNote] = useState("")
-  const [savedNotes, setSavedNotes] = useState([])
+  const [savedNotes, setSavedNotes] = useState("")
 
   function splitSentences(text) {
-    const sentences = text.split('.').map(sentence => sentence.trim());
+    // if (typeof text !== 'string') {
+    //   return [];
+    // }
+    console.log("=============text i got===========")
+    console.log(text);
+    const sentences = text.split('-').map(sentence => sentence.trim());
     return sentences;
   }
 
@@ -102,7 +107,7 @@ function Audio() {
     console.log(response.data);
 
     console.log("=============================================")
-    setSavedNotes([...savedNotes, response.choices[0].message.content])
+    setSavedNotes(response.choices[0].message.content)
     setNote('')
   }
 
@@ -139,7 +144,7 @@ role
       <div className="box">
           {/* <h2>Current Note</h2> */}
           <button onClick={() => setIsListening(prevState => !prevState)}>
-          {isListening ? <span>🛑</span> : <span>🎙️</span>} Start/Stop
+          {isListening ? <span>🛑Stop</span> : <span>🎙️ Start</span>}
           </button>
           <br></br>
           <button onClick={() => generateSummary(note)} disabled={!note} className=" mt-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer">
@@ -153,9 +158,18 @@ role
 
       <div className="box">
           {/* <h2>Notes</h2> */}
-          {savedNotes.map(n => (
-            <p key={n}>{n}</p>
-          ))}
+
+
+        
+        {splitSentences(savedNotes).map(n => (
+     <ul>     
+<li className='text-left' key={n}>{n}</li>
+</ul>
+))}
+        
+          
+
+         
         </div>
 
       

@@ -1,31 +1,36 @@
-import { useState, useEffect } from 'react'
-import './App.css'
-import { BottomNavigation, BottomNavigationAction, LinearProgress } from '@mui/material'
-import NoteIcon from '@mui/icons-material/Note';
-import SummarizeIcon from '@mui/icons-material/Summarize';
-import MicIcon from '@mui/icons-material/Mic';
-import OpenAI from 'openai';
+import { useState, useEffect } from "react";
+import "./App.css";
+import {
+  BottomNavigation,
+  BottomNavigationAction,
+  LinearProgress,
+  Paper,
+} from "@mui/material";
+import NoteIcon from "@mui/icons-material/Note";
+import SummarizeIcon from "@mui/icons-material/Summarize";
+import MicIcon from "@mui/icons-material/Mic";
+import OpenAI from "openai";
 
 const SpeechRecognition =
-window.SpeechRecognition || window.webkitSpeechRecognition
-const mic = new SpeechRecognition()
+  window.SpeechRecognition || window.webkitSpeechRecognition;
+const mic = new SpeechRecognition();
 
-mic.continuous = true
-mic.interimResults = true
-mic.lang = 'en-US'
+mic.continuous = true;
+mic.interimResults = true;
+mic.lang = "en-US";
 function Audio() {
-  const [value, setValue] = useState(0)
-  const [isListening, setIsListening] = useState(false)
-  const [note, setNote] = useState("")
-  const [savedNotes, setSavedNotes] = useState("")
+  const [value, setValue] = useState(0);
+  const [isListening, setIsListening] = useState(false);
+  const [note, setNote] = useState("");
+  const [savedNotes, setSavedNotes] = useState("");
 
   function splitSentences(text) {
     // if (typeof text !== 'string') {
     //   return [];
     // }
-    console.log("=============text i got===========")
+    console.log("=============text i got===========");
     console.log(text);
-    const sentences = text.split('-').map(sentence => sentence.trim());
+    const sentences = text.split("-").map((sentence) => sentence.trim());
     return sentences;
   }
 
@@ -35,39 +40,39 @@ function Audio() {
   // console.log("=============arrray===========")
 
   useEffect(() => {
-    handleListen()
-  }, [isListening])
+    handleListen();
+  }, [isListening]);
 
   const handleListen = () => {
     if (isListening) {
-      mic.start()
+      mic.start();
       mic.onend = () => {
-        console.log('continue..')
-        mic.start()
-      }
+        console.log("continue..");
+        mic.start();
+      };
     } else {
-      mic.stop()
+      mic.stop();
       mic.onend = () => {
-        console.log('Stopped Mic on Click')
-      }
+        console.log("Stopped Mic on Click");
+      };
     }
     mic.onstart = () => {
-      console.log('Mics on')
-    }
+      console.log("Mics on");
+    };
 
-    mic.onresult = event => {
+    mic.onresult = (event) => {
       const transcript = Array.from(event.results)
-        .map(result => result[0])
-        .map(result => result.transcript)
-        .join('')
+        .map((result) => result[0])
+        .map((result) => result.transcript)
+        .join("");
       // console.log(transcript)
-      console.log('test')
-      setNote(transcript)
-      mic.onerror = event => {
-        console.log(event.error)
-      }
-    }
-  }
+      console.log("test");
+      setNote(transcript);
+      mic.onerror = (event) => {
+        console.log(event.error);
+      };
+    };
+  };
   // const handleSaveNote = () => {
   //   setSavedNotes([...savedNotes, note])
   //   setNote('')
@@ -76,42 +81,45 @@ function Audio() {
   const generateSummary = async (note) => {
     // const configuration = new Configuration({
     //   // eslint-disable-next-line no-undef
-      
+
     // });
-    const OPENAI_API_KEY = ""
+    const OPENAI_API_KEY =
+      "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";
     const openai = new OpenAI({
       // eslint-disable-next-line no-undef
       apiKey: OPENAI_API_KEY,
-      dangerouslyAllowBrowser: true
+      dangerouslyAllowBrowser: true,
     });
     // eslint-disable-next-line no-undef
     console.log(OPENAI_API_KEY);
-  
+
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
-      messages: [{
-        role: "system", 
-        content: `generate a short note of the important points with bullet points that might help a student for exam preparation. `,
-      },
-      {
-        role: "user", 
-        content: note,
-      },],
+      messages: [
+        {
+          role: "system",
+          content: `generate a short note of the important points with bullet points that might help a student for exam preparation. `,
+        },
+        {
+          role: "user",
+          content: note,
+        },
+      ],
       // temperature: 0,
       // max_tokens: 1024,
     });
     const sentence = splitSentences(note);
-    console.log("=============================================")
+    console.log("=============================================");
     console.log(response.choices[0].message.content);
 
     console.log(response.data);
 
-    console.log("=============================================")
-    setSavedNotes(response.choices[0].message.content)
-    setNote('')
-  }
+    console.log("=============================================");
+    setSavedNotes(response.choices[0].message.content);
+    setNote("");
+  };
 
-/*
+  /*
 
 ontent
 : 
@@ -119,62 +127,75 @@ ontent
 role
 : 
 "assistant"
-*/ 
-
-
-
+*/
 
   return (
-    <div className=''>
+    <div className="">
       <div>
-      <BottomNavigation
-          showLabels
-          value={value}
-          onChange={(event, newValue) => {
-            setValue(newValue);
-          }}
+        <Paper
+          sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
+          elevation={3}
         >
-          <BottomNavigationAction label="Mic" icon={<MicIcon />} href='/'/>
-          <BottomNavigationAction label="Notes" icon={<NoteIcon />} href='/notes'/>
-          <BottomNavigationAction label="Questions" icon={<SummarizeIcon />} href='/questions'/>
-      </BottomNavigation>
-      </div>
-      
-      <LinearProgress />
-      <div className="box">
-          {/* <h2>Current Note</h2> */}
-          <button onClick={() => setIsListening(prevState => !prevState)}>
-          {isListening ? <span>🛑Stop</span> : <span>🎙️ Start</span>}
+          <button onClick={() => setIsListening((prevState) => !prevState)}>
+            {isListening ? (
+              <>
+                <span>🛑Stop</span>
+                <LinearProgress />
+              </>
+            ) : (
+              <span>🎙️ Start</span>
+            )}
           </button>
           <br></br>
-          <button onClick={() => generateSummary(note)} disabled={!note} className=" mt-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer">
-          Generate Note</button>
-          
-          
-          <p className='mt-5'>{note}</p>
-        </div>
-      {/* <p>{note}</p> */}
-
+          <button
+            onClick={() => generateSummary(note)}
+            disabled={!note}
+            className=" mt-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
+          >
+            Generate Note
+          </button>
+          <BottomNavigation
+            showLabels
+            value={value}
+            onChange={(event, newValue) => {
+              setValue(newValue);
+            }}
+          >
+            <BottomNavigationAction label="Mic" icon={<MicIcon />} href="/" />
+            <BottomNavigationAction
+              label="Notes"
+              icon={<NoteIcon />}
+              href="/notes"
+            />
+            <BottomNavigationAction
+              label="Questions"
+              icon={<SummarizeIcon />}
+              href="/questions"
+            />
+          </BottomNavigation>
+        </Paper>
+      </div>
 
       <div className="box">
-          {/* <h2>Notes</h2> */}
+        {/* <h2>Current Note</h2> */}
 
+        <p className="mt-5">{note}</p>
+      </div>
+      {/* <p>{note}</p> */}
 
-          <ul className="list-decimal list-inside">    
-          {splitSentences(savedNotes).map(n => (
-  
-    <li className="text-left" key={n}>{n}</li>
- 
-))}
-        </ul> 
-          
+      <div className="box">
+        {/* <h2>Notes</h2> */}
 
-         
-        </div>
-
-      
+        <ul className="list-decimal list-inside">
+          {splitSentences(savedNotes).map((n) => (
+            <li className="text-left" key={n}>
+              {n}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
-  )
+  );
 }
 
-export default Audio
+export default Audio;

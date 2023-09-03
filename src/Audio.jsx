@@ -98,7 +98,7 @@ function Audio() {
       messages: [
         {
           role: "system",
-          content: `generate a short note of the important points with bullet points that might help a student for exam preparation. `,
+          content: `generate a very short note of the important points with bullet points that might help a student for exam preparation. `,
         },
         {
           role: "user",
@@ -186,10 +186,10 @@ role
       <div className="box">
         {/* <h2>Notes</h2> */}
 
-        <ul className="list-decimal list-inside">
+        <ul className="">
           {splitSentences(savedNotes).map((n) => (
             <li className="text-left" key={n}>
-              {n}
+             <strong>*</strong> {n}
             </li>
           ))}
         </ul>

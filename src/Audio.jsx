@@ -74,17 +74,19 @@ function Audio() {
       
       <LinearProgress />
       <div className="box">
-          <h2>Current Note</h2>
-          {isListening ? <span>🎙️</span> : <span>🛑🎙️</span>}
-          <button onClick={handleSaveNote} disabled={!note}>
-            Save Note
-          </button>
+          {/* <h2>Current Note</h2> */}
           <button onClick={() => setIsListening(prevState => !prevState)}>
-            Start/Stop
+          {isListening ? <span>🛑</span> : <span>🎙️</span>} Start/Stop
           </button>
-          <p>{note}</p>
+          <br></br>
+          <button onClick={handleSaveNote} disabled={!note} className=" mt-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+  Generate Note
+</button>
+          
+          
+          <p className='mt-5'>{note}</p>
         </div>
-      <p>{note}</p>
+      {/* <p>{note}</p> */}
 
       {/* <div className="box">
           <h2>Notes</h2>

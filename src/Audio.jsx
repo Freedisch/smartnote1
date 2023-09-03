@@ -23,21 +23,23 @@ function Audio() {
   const [isListening, setIsListening] = useState(false);
   const [note, setNote] = useState("");
   const [savedNotes, setSavedNotes] = useState("");
+  const [questions, setQuestions] = useState("");
 
   function splitSentences(text) {
-    // if (typeof text !== 'string') {
-    //   return [];
-    // }
+
     console.log("=============text i got===========");
     console.log(text);
     const sentences = text.split("-").map((sentence) => sentence.trim());
     return sentences;
   }
 
-  // const text = "- Important human diseases caused by viruses: measles, HIV, polio, influenza, and hepatitis. The debate on whether viruses are living or non-living entities. Introduction to the study of viruses in biology. Exploring the structure and characteristics of viruses."
-  // console.log("=============arrray===========")
-  // console.log(splitSentences(text));
-  // console.log("=============arrray===========")
+  function splitQuestions(text) {
+
+    console.log("=============text i got===========");
+    console.log(text);
+    const sentences = text.split("?").map((sentence) => sentence.trim());
+    return sentences;
+  }
 
   useEffect(() => {
     handleListen();
@@ -77,6 +79,48 @@ function Audio() {
   //   setSavedNotes([...savedNotes, note])
   //   setNote('')
   // }
+  const generateQuestions = async (note) => {
+    // const configuration = new Configuration({
+    //   // eslint-disable-next-line no-undef
+
+    // });
+    const OPENAI_API_KEY =
+      "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";
+    const openai = new OpenAI({
+      // eslint-disable-next-line no-undef
+      apiKey: OPENAI_API_KEY,
+      dangerouslyAllowBrowser: true,
+    });
+    // eslint-disable-next-line no-undef
+    console.log(OPENAI_API_KEY);
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: `generate 4 important short questions based on the text`,
+        },
+        {
+          role: "user",
+          content: note,
+        },
+      ],
+      // temperature: 0,
+      // max_tokens: 1024,
+    });
+    // const sentence = splitSentences(note);
+    console.log("=============================================");
+    console.log(response.choices[0].message.content);
+
+    console.log(response.data);
+
+    console.log("=============================================");
+    setQuestions(response.choices[0].message.content);
+
+
+    setNote("");
+  };
 
   const generateSummary = async (note) => {
     // const configuration = new Configuration({
@@ -116,6 +160,8 @@ function Audio() {
 
     console.log("=============================================");
     setSavedNotes(response.choices[0].message.content);
+
+
     setNote("");
   };
 
@@ -176,10 +222,17 @@ role
       >
         Generate Note
       </button>
+      <button
+        onClick={() => generateQuestions(savedNotes)}
+        disabled={!savedNotes}
+        className=" mt-3 ml-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
+      >
+        Generate Questions
+      </button>
       <div className="box">
         {/* <h2>Current Note</h2> */}
 
-        <p className="mt-5">{note}</p>
+        <p className="mt-5 text-justify">{note}</p>
       </div>
       {/* <p>{note}</p> */}
 
@@ -193,6 +246,16 @@ role
             </li>
           ))}
         </ul>
+
+        <div className="mt-20">
+        <ul className="">
+          {splitQuestions(questions).map((n) => (
+            <li className="text-left" key={n}>
+             {n}?
+            </li>
+          ))}
+        </ul>
+        </div>
       </div>
     </div>
   );

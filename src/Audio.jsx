@@ -160,13 +160,13 @@ role
           {/* <h2>Notes</h2> */}
 
 
-        
-        {splitSentences(savedNotes).map(n => (
-     <ul>     
-<li className='text-left' key={n}>{n}</li>
-</ul>
+          <ul className="list-decimal list-inside">    
+          {splitSentences(savedNotes).map(n => (
+  
+    <li className="text-left" key={n}>{n}</li>
+ 
 ))}
-        
+        </ul> 
           
 
          
